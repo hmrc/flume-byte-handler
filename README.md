@@ -13,7 +13,7 @@ available).
 To use this handler, you must specify its class in the HttpSource in your Flume
 configuration file. An example of this is :
 
-'''
+```properties
 audit.sources = httpSource
 audit.channels = memoryChannel
 audit.sinks = nullSink
@@ -30,7 +30,7 @@ audit.channels.memoryChannel.type = memory
 # Null Sink
 audit.sinks.nullSink.type = null
 audit.sinks.nullSink.channel = memoryChannel
-'''
+```
 
 ### License
 
