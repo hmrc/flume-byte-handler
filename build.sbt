@@ -17,6 +17,7 @@
 import io.gatling.sbt.GatlingPlugin
 import sbt._
 import sbt.Keys.{parallelExecution, _}
+import uk.gov.hmrc.versioning.SbtGitVersioning
 
 val appName = "flume-byte-handler"
 val Benchmark = config("bench") extend Test
@@ -29,6 +30,7 @@ val compileDeps = Seq(
 
 val testDeps = Seq(
   "org.scalatest" %% "scalatest" % "2.2.6" % Test,
+  "org.pegdown" % "pegdown" % "1.5.0" % Test,
   "org.mockito" % "mockito-all" % "1.10.19" % Test
 )
 
@@ -49,9 +51,10 @@ val commonSettings = Seq(
   ),
   crossPaths := false,
   version := "0.1-SNAPSHOT"
-)
+)// ++ SbtAutoBuildPlugin.projectSettings
 
 lazy val `flume-byte-handler` = (project in file("."))
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
   .disablePlugins(AssemblyPlugin)
   .aggregate(handler, gatling)
   .settings(
@@ -59,7 +62,7 @@ lazy val `flume-byte-handler` = (project in file("."))
   )
 
 lazy val handler = (project in file("handler"))
-  .enablePlugins(AssemblyPlugin)
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, AssemblyPlugin)
   .configs(Benchmark)
   .settings(
     commonSettings,
@@ -70,14 +73,15 @@ lazy val handler = (project in file("handler"))
 
     testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
     parallelExecution in Benchmark := false,
+    testOptions in Benchmark := Seq(),
     inConfig(Benchmark)(Defaults.testSettings)
-)
+  )
 
 lazy val gatling = (project in file("gatling"))
-  .enablePlugins(GatlingPlugin)
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, GatlingPlugin)
   .disablePlugins(AssemblyPlugin)
   .settings(
     commonSettings,
-    libraryDependencies := gatlingDeps,
+    libraryDependencies ++= gatlingDeps,
     name := s"$appName-gatling"
   )
