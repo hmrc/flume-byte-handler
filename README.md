@@ -10,6 +10,8 @@ the amount of memory allocated for each event, and pre-allocating the correct
 event memory size based on the HTTP Content-Length header value (where this is
 available).
 
+## Configuration
+
 To use this handler, you must specify its class in the HttpSource in your Flume
 configuration file. An example of this is :
 
@@ -31,6 +33,17 @@ audit.channels.memoryChannel.type = memory
 audit.sinks.nullSink.type = null
 audit.sinks.nullSink.channel = memoryChannel
 ```
+
+## Building
+
+To run unit tests, you can use the usual SBT command ```sbt test```.
+
+To run some simple ScalaMeter benchmark tests, us ```sbt bench:test```.
+
+Gatling tests need a running Flume process, which can use the configuration
+above. The assembly binary will need to be included in the Flume path for this
+to work correctly, as it contains the Scala dependencies needed by the handler
+code. Run the tests using ```sbt gatling-it:test```.
 
 ### License
 
