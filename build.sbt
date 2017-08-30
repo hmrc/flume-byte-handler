@@ -23,9 +23,12 @@ val appName = "flume-byte-handler"
 val Benchmark = config("bench") extend Test
 
 val compileDeps = Seq(
-  "org.apache.flume" % "flume-ng-core" % "1.7.0" % "provided,bench",
-  "org.apache.flume" % "flume-ng-sdk" % "1.7.0" % "provided,bench",
-  "org.slf4j" % "slf4j-api" % "1.7.25" % Provided
+  "org.apache.flume" % "flume-ng-core" % "1.7.0" % "provided,bench" excludeAll(
+    ExclusionRule("org.apache.avro"),
+    ExclusionRule("org.apache.flume", "flume-ng-auth"),
+    ExclusionRule("org.apache.thrift")
+  ),
+  "org.apache.flume" % "flume-ng-sdk" % "1.7.0" % "provided,bench" notTransitive()
 )
 
 val testDeps = Seq(
@@ -43,6 +46,9 @@ val gatlingDeps = Seq(
   "io.gatling" % "gatling-test-framework" % "2.2.5" % IntegrationTest
 )
 
+disablePlugins(AssemblyPlugin)
+enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
+
 val commonSettings = Seq(
   scalaVersion := "2.11.7",
   resolvers := Seq(
@@ -50,19 +56,19 @@ val commonSettings = Seq(
     "typesafe-releases" at "http://repo.typesafe.com/typesafe/releases/"
   ),
   crossPaths := false,
+  organization := "uk.gov.hmrc",
   version := "0.1-SNAPSHOT"
-)// ++ SbtAutoBuildPlugin.projectSettings
+)
 
 lazy val `flume-byte-handler` = (project in file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
-  .disablePlugins(AssemblyPlugin)
   .aggregate(handler, gatling)
   .settings(
-    commonSettings
+    commonSettings,
+    name := s"$appName-parent"
   )
 
 lazy val handler = (project in file("handler"))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, AssemblyPlugin)
+  .enablePlugins(AssemblyPlugin)
   .configs(Benchmark)
   .settings(
     commonSettings,
@@ -78,8 +84,7 @@ lazy val handler = (project in file("handler"))
   )
 
 lazy val gatling = (project in file("gatling"))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, GatlingPlugin)
-  .disablePlugins(AssemblyPlugin)
+  .enablePlugins(GatlingPlugin)
   .settings(
     commonSettings,
     libraryDependencies ++= gatlingDeps,

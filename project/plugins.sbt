@@ -10,3 +10,5 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-git-versioning" % "0.9.0")
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.5")
 
 addSbtPlugin("io.gatling" % "gatling-sbt" % "2.2.0")
+
+libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.6.1"
