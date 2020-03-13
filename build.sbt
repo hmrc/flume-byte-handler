@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import io.gatling.sbt.GatlingPlugin
 import sbt._
 import sbt.Keys.{parallelExecution, _}
 import uk.gov.hmrc.versioning.SbtGitVersioning
